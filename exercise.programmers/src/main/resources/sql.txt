@@ -1,0 +1,100 @@
+# LIMIT으로 TOP 효과내기
+SELECT *
+FROM employees
+LIMIT 10;
+
+# LIMIT으로 조회컬럼 제한하기
+SELECT column1, column2, ...
+FROM your_table
+LIMIT offset, number_of_rows;
+
+#MAX값 구하기
+SELECT MAX(DATETIME)
+FROM ANIMAL_INS AI
+
+#SUBSTRING 사용하기 (첫번쨰 글자부터 3글자까지 추출)
+SELECT SUBSTRING(full_name, 1, 3)
+FROM employees;
+
+#SUBSTRING 사용하기 (세번째 글자부터 끝까지 추출)
+SELECT SUBSTRING(full_name, 1, 3)
+FROM employees;
+
+#LIKE문 사용하기
+#son으로 끝나는 조건
+SELECT *
+FROM employees
+WHERE last_name LIKE '%son';
+
+#IN에 LIKE문 사용하기
+WHERE your_column LIKE 'prefix%' AND your_column IN ('value1', 'value2', 'value3');
+
+#CASE WHEN 사용하기
+  CASE
+    WHEN salary > 50000 THEN 'High'
+    WHEN salary > 30000 THEN 'Medium'
+    ELSE 'Low'
+  END AS salary_category
+
+#날짜에서 각각 추출하기
+WHERE YEAR(birth_date) = 2021;
+WHERE YEAR(birth_date) = 2021 AND MONTH(birth_date) = 1;
+
+#날짜에서 범위로 추출하기
+WHERE hire_date BETWEEN '2021-01-01' AND '2021-03-31';
+DATE_FORMAT(your_date_column, '%Y-%m') = '2021-09';
+
+#날짜에서 시간 연산하기
+TIME(your_datetime_column) BETWEEN '09:00:00' AND '19:59:59'
+
+#DATE포맷조절하기
+SELECT DATE_FORMAT(your_date_column, '%Y-%m-%d') AS formatted_date
+
+#AVG 사용 시 소수점 첫째자리 반올림하기
+SELECT ROUND(AVG(score), 1) AS rounded_average
+
+#소수점 내림
+FLOOR(7.8)
+
+#소수점 올림
+CEIL(7.2)
+
+#2022년9월에 해당하는 건만 가져오기
+CH.START_DATE BETWEEN '2022-09-01' AND DATE_SUB('2022-10-01', INTERVAL 1 DAY)
+
+#두 날짜의 차이값 비교하기
+
+
+#컬럼에 문자열 추가하기
+SELECT CONCAT(your_column, ' 추가문자열') AS new_result
+
+
+# FOOD_TYPE, FAVORITES 단위로 순위매긴 뒤 각 타입별로 1등만 추출하여 보여주기
+WITH RANKED_RESTAURANTS AS (
+        SELECT RI.FOOD_TYPE
+        ,   RI.FAVORITES
+        ,   RI.REST_ID
+        ,   RI.REST_NAME
+        ,   DENSE_RANK() OVER (PARTITION BY RI.FOOD_TYPE ORDER BY RI.FAVORITES DESC) AS RANK_NUM
+        FROM REST_INFO RI
+        GROUP BY RI.FOOD_TYPE
+        ,   RI.FAVORITES
+        ,   RI.REST_ID
+        ,   RI.REST_NAME
+)
+SELECT RR.FOOD_TYPE
+,   RR.REST_ID
+,   RR.REST_NAME
+,   RR.FAVORITES
+FROM RANKED_RESTAURANTS RR
+WHERE RR.RANK_NUM = 1
+ORDER BY RR.FOOD_TYPE DESC;
+
+#RECURSIVE로 테이블에 값 넣기
+WITH RECURSIVE HOURS AS (
+  SELECT 0 AS HOUR
+  UNION
+  SELECT HOUR + 1
+  FROM HOURS
+  WHERE HOUR < 23
+)
